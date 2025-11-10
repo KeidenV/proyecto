@@ -2,10 +2,19 @@ from flask import Flask, render_template
 from flask_login import LoginManager
 from config import Config
 from models import db, User, Usuario, Rol, Actividad, Entrenamiento, Asistencia, Competicion, ResultadoCompeticion
+import os
 
 # Crear la aplicación Flask
 app = Flask(__name__)
 app.config.from_object(Config)
+# En producción (por defecto) requerimos que se provea DATABASE_URL.
+# Esto evita intentar conectar a 'localhost' en plataformas como Railway.
+if os.environ.get('FLASK_ENV', 'production') == 'production' and not os.environ.get('DATABASE_URL'):
+    # Mensaje claro para los logs de Railway
+    print('\n[ERROR] DATABASE_URL no encontrada en las variables de entorno.')
+    print('[ERROR] En Railway añade la variable de entorno DATABASE_URL con la cadena de conexión provista por el plugin MySQL/Service.')
+    print("[ERROR] Ejemplo: mysql+pymysql://user:pass@host:3306/dbname\n")
+    raise RuntimeError('DATABASE_URL no configurada en entorno de producción')
 # app.config['WTF_CSRF_ENABLED'] = False  # CSRF habilitado por defecto
 
 # Inicializar extensiones
