@@ -45,6 +45,6 @@ def internal_error(error):
     return render_template('errors/500.html'), 500
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-    app.run(debug=True)
+    # No ejecutar db.create_all() automáticamente en el arranque.
+    # Para inicializar la base de datos localmente usa: python init_db.py
+    app.run(debug=True, host='0.0.0.0')
