@@ -18,16 +18,6 @@ def check_python_version():
     print(f"[OK] Python {sys.version.split()[0]} detectado")
     return True
 
-def check_virtual_env():
-    """Verificar si estamos en un entorno virtual"""
-    if hasattr(sys, 'real_prefix') or (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix):
-        print("[OK] Entorno virtual detectado")
-        return True
-    else:
-        print("[WARN] No se detectó un entorno virtual")
-        print("   Se recomienda usar un entorno virtual para evitar conflictos")
-        return False
-
 def check_dependencies():
     """Verificar que las dependencias estén instaladas"""
     try:
@@ -124,4 +114,5 @@ def main():
         print("   6. Ejecutar aplicación: python app.py")
 
 if __name__ == "__main__":
+
     main()
