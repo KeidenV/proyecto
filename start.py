@@ -62,7 +62,6 @@ def main():
     
     # Verificaciones básicas
     python_ok = check_python_version()
-    venv_ok = check_virtual_env()
     deps_ok = check_dependencies()
     db_ok = check_database()
     
@@ -104,9 +103,6 @@ def main():
         print("\nPasos recomendados:")
         if not python_ok:
             print("   1. Actualizar Python a versión 3.7 o superior")
-        if not venv_ok:
-            print("   2. Crear entorno virtual: python -m venv venv")
-            print("   3. Activar entorno virtual: venv\\Scripts\\activate (Windows) o source venv/bin/activate (Linux/Mac)")
         if not deps_ok:
             print("   4. Instalar dependencias: pip install -r requirements.txt")
         if not db_ok:
@@ -116,3 +112,4 @@ def main():
 if __name__ == "__main__":
 
     main()
+
