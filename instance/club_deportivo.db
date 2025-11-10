@@ -1,0 +1,97 @@
+-- IMPORTANTE: ajustar el motor y collation según tu proyecto
+-- Ejemplo recomendado:
+-- CREATE DATABASE club_deportivo CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+USE club_deportivo;
+
+-- Tabla: user
+CREATE TABLE user (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(80) NOT NULL UNIQUE,
+    email VARCHAR(120) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    role VARCHAR(20) NOT NULL,
+    created_at DATETIME,
+    is_active BOOLEAN
+) ENGINE=InnoDB;
+
+-- Tabla: trainer
+CREATE TABLE trainer (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    phone VARCHAR(20),
+    email VARCHAR(120),
+    specialization VARCHAR(100),
+    certification VARCHAR(200),
+    hire_date DATE,
+    is_active BOOLEAN,
+    FOREIGN KEY (user_id) REFERENCES user(id)
+) ENGINE=InnoDB;
+
+-- Tabla: member
+CREATE TABLE member (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    phone VARCHAR(20),
+    address VARCHAR(200),
+    birth_date DATE,
+    emergency_contact VARCHAR(100),
+    emergency_phone VARCHAR(20),
+    medical_notes TEXT,
+    membership_start DATE,
+    membership_end DATE,
+    is_active BOOLEAN,
+    FOREIGN KEY (user_id) REFERENCES user(id)
+) ENGINE=InnoDB;
+
+-- Tabla: training
+CREATE TABLE training (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    trainer_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    sport_type VARCHAR(50) NOT NULL,
+    max_participants INT,
+    duration_minutes INT,
+    schedule_day VARCHAR(20) NOT NULL,
+    schedule_time TIME NOT NULL,
+    location VARCHAR(100),
+    is_active BOOLEAN,
+    created_at DATETIME,
+    FOREIGN KEY (trainer_id) REFERENCES trainer(id)
+) ENGINE=InnoDB;
+
+-- Tabla: competition
+CREATE TABLE competition (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    sport_type VARCHAR(50) NOT NULL,
+    event_date DATE NOT NULL,
+    event_time TIME,
+    location VARCHAR(200),
+    registration_deadline DATE,
+    max_participants INT,
+    entry_fee DECIMAL(10,2),
+    is_active BOOLEAN,
+    created_at DATETIME
+) ENGINE=InnoDB;
+
+-- Tabla: attendance
+CREATE TABLE attendance (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    member_id INT NOT NULL,
+    training_id INT NOT NULL,
+    attendance_date DATE NOT NULL,
+    check_in_time TIME,
+    check_out_time TIME,
+    notes TEXT,
+    created_at DATETIME,
+    CONSTRAINT unique_attendance UNIQUE (member_id, training_id, attendance_date),
+    FOREIGN KEY (member_id) REFERENCES member(id),
+    FOREIGN KEY (training_id) REFERENCES training(id)
+) ENGINE=InnoDB;

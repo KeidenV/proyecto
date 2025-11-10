@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Nueva Competición - Club Deportivo{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2><i class="fas fa-plus me-2"></i>Nueva Competición</h2>
+        <p class="text-muted">Registra una nueva competición en el club</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('admin.competitions') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Volver a Competiciones
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h6><i class="fas fa-trophy me-2"></i>Información de la Competición</h6>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        {{ form.name.label(class="form-label") }}
+                        {{ form.name(class="form-control") }}
+                        {% if form.name.errors %}
+                            <div class="text-danger">
+                                {% for error in form.name.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.description.label(class="form-label") }}
+                        {{ form.description(class="form-control", rows="3") }}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.sport_type.label(class="form-label") }}
+                            {{ form.sport_type(class="form-control") }}
+                            {% if form.sport_type.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.sport_type.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            {{ form.location.label(class="form-label") }}
+                            {{ form.location(class="form-control") }}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.event_date.label(class="form-label") }}
+                            {{ form.event_date(class="form-control") }}
+                            {% if form.event_date.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.event_date.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            {{ form.event_time.label(class="form-label") }}
+                            {{ form.event_time(class="form-control") }}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.registration_deadline.label(class="form-label") }}
+                            {{ form.registration_deadline(class="form-control") }}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            {{ form.max_participants.label(class="form-label") }}
+                            {{ form.max_participants(class="form-control") }}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.entry_fee.label(class="form-label") }}
+                        {{ form.entry_fee(class="form-control") }}
+                        <small class="form-text text-muted">Deja en 0 para competición gratuita</small>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('admin.competitions') }}" class="btn btn-secondary me-md-2">Cancelar</a>
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h6><i class="fas fa-info-circle me-2"></i>Información</h6>
+            </div>
+            <div class="card-body">
+                <h6>Campos obligatorios:</h6>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-check text-success me-2"></i>Nombre de la competición</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Tipo de deporte</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Fecha del evento</li>
+                </ul>
+                
+                <hr>
+                
+                <h6>Campos opcionales:</h6>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-info text-info me-2"></i>Descripción</li>
+                    <li><i class="fas fa-info text-info me-2"></i>Ubicación</li>
+                    <li><i class="fas fa-info text-info me-2"></i>Hora del evento</li>
+                    <li><i class="fas fa-info text-info me-2"></i>Fecha límite de registro</li>
+                    <li><i class="fas fa-info text-info me-2"></i>Máximo de participantes</li>
+                    <li><i class="fas fa-info text-info me-2"></i>Costo de inscripción</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

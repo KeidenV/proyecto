@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Nuevo Miembro - Club Deportivo{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2><i class="fas fa-user-plus me-2"></i>Nuevo Miembro</h2>
+        <p class="text-muted">Registra un nuevo miembro en el club</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('admin.members') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Volver a Miembros
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h6><i class="fas fa-user me-2"></i>Información Personal</h6>
+            </div>
+            <div class="card-body">
+                <form method="POST" data-autosave="true">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.first_name.label(class="form-label") }}
+                            {{ form.first_name(class="form-control") }}
+                            {% if form.first_name.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.first_name.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            {{ form.last_name.label(class="form-label") }}
+                            {{ form.last_name(class="form-control") }}
+                            {% if form.last_name.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.last_name.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.phone.label(class="form-label") }}
+                            {{ form.phone(class="form-control", type="tel") }}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            {{ form.birth_date.label(class="form-label") }}
+                            {{ form.birth_date(class="form-control") }}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.address.label(class="form-label") }}
+                        {{ form.address(class="form-control") }}
+                    </div>
+                    
+                    <hr>
+                    <h6 class="text-primary mb-3"><i class="fas fa-phone me-2"></i>Contacto de Emergencia</h6>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.emergency_contact.label(class="form-label") }}
+                            {{ form.emergency_contact(class="form-control") }}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            {{ form.emergency_phone.label(class="form-label") }}
+                            {{ form.emergency_phone(class="form-control", type="tel") }}
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    <h6 class="text-primary mb-3"><i class="fas fa-heartbeat me-2"></i>Información Médica</h6>
+                    
+                    <div class="mb-3">
+                        {{ form.medical_notes.label(class="form-label") }}
+                        {{ form.medical_notes(class="form-control", rows="3", placeholder="Alergias, condiciones médicas, medicamentos, etc.") }}
+                    </div>
+                    
+                    <hr>
+                    <h6 class="text-primary mb-3"><i class="fas fa-calendar me-2"></i>Membresía</h6>
+                    
+                    <div class="mb-3">
+                        {{ form.membership_end.label(class="form-label") }}
+                        {{ form.membership_end(class="form-control") }}
+                        <small class="form-text text-muted">Deja vacío para membresía sin fecha límite</small>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('admin.members') }}" class="btn btn-secondary me-md-2">Cancelar</a>
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h6><i class="fas fa-info-circle me-2"></i>Información</h6>
+            </div>
+            <div class="card-body">
+                <h6>Datos que se crearán automáticamente:</h6>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-check text-success me-2"></i>Usuario del sistema</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Contraseña temporal</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Fecha de inicio de membresía</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Estado activo</li>
+                </ul>
+                
+                <hr>
+                
+                <h6>Contraseña temporal:</h6>
+                <div class="alert alert-warning">
+                    <strong>password123</strong><br>
+                    <small>El miembro deberá cambiarla en su primer acceso</small>
+                </div>
+                
+                <hr>
+                
+                <h6>Email del sistema:</h6>
+                <div class="alert alert-info">
+                    <small>Se generará automáticamente basado en el nombre</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card shadow mt-3">
+            <div class="card-header bg-warning text-dark">
+                <h6><i class="fas fa-exclamation-triangle me-2"></i>Importante</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    <li><i class="fas fa-arrow-right text-warning me-2"></i>Verifica los datos antes de guardar</li>
+                    <li><i class="fas fa-arrow-right text-warning me-2"></i>La información médica es confidencial</li>
+                    <li><i class="fas fa-arrow-right text-warning me-2"></i>El contacto de emergencia es obligatorio</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

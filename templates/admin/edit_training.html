@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Entrenamiento - Club Deportivo{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2><i class="fas fa-edit me-2"></i>Editar Entrenamiento</h2>
+        <p class="text-muted">Modifica la información del entrenamiento</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('admin.trainings') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Volver a Entrenamientos
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h6><i class="fas fa-running me-2"></i>Información del Entrenamiento</h6>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        {{ form.trainer_id.label(class="form-label") }}
+                        {{ form.trainer_id(class="form-select") }}
+                        {% if form.trainer_id.errors %}
+                            <div class="text-danger">
+                                {% for error in form.trainer_id.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.name.label(class="form-label") }}
+                        {{ form.name(class="form-control") }}
+                        {% if form.name.errors %}
+                            <div class="text-danger">
+                                {% for error in form.name.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.description.label(class="form-label") }}
+                        {{ form.description(class="form-control", rows="3") }}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.sport_type.label(class="form-label") }}
+                            {{ form.sport_type(class="form-control") }}
+                            {% if form.sport_type.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.sport_type.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            {{ form.location.label(class="form-label") }}
+                            {{ form.location(class="form-control") }}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            {{ form.max_participants.label(class="form-label") }}
+                            {{ form.max_participants(class="form-control") }}
+                            {% if form.max_participants.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.max_participants.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            {{ form.duration_minutes.label(class="form-label") }}
+                            {{ form.duration_minutes(class="form-control") }}
+                            {% if form.duration_minutes.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.duration_minutes.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            {{ form.schedule_day.label(class="form-label") }}
+                            {{ form.schedule_day(class="form-select") }}
+                            {% if form.schedule_day.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.schedule_day.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.schedule_time.label(class="form-label") }}
+                        {{ form.schedule_time(class="form-control") }}
+                        {% if form.schedule_time.errors %}
+                            <div class="text-danger">
+                                {% for error in form.schedule_time.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('admin.trainings') }}" class="btn btn-secondary me-md-2">Cancelar</a>
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h6><i class="fas fa-info-circle me-2"></i>Información Actual</h6>
+            </div>
+            <div class="card-body">
+                <h6>Entrenamiento:</h6>
+                <p><strong>{{ training.name }}</strong></p>
+                <p><small class="text-muted">{{ training.description or 'Sin descripción' }}</small></p>
+                
+                <hr>
+                
+                <h6>Detalles:</h6>
+                <ul class="list-unstyled">
+                    <li><strong>Deporte:</strong> {{ training.sport_type }}</li>
+                    <li><strong>Entrenador:</strong> {{ training.trainer.first_name }} {{ training.trainer.last_name }}</li>
+                    <li><strong>Horario:</strong> {{ training.schedule_day }} a las {{ training.schedule_time.strftime('%H:%M') }}</li>
+                    <li><strong>Duración:</strong> {{ training.duration_minutes }} minutos</li>
+                    <li><strong>Ubicación:</strong> {{ training.location or 'No especificada' }}</li>
+                    <li><strong>Participantes:</strong> {{ training.max_participants }} máximo</li>
+                </ul>
+                
+                <hr>
+                
+                <h6>Estado:</h6>
+                <span class="badge bg-{{ 'success' if training.is_active else 'danger' }}">
+                    {{ 'Activo' if training.is_active else 'Inactivo' }}
+                </span>
+            </div>
+        </div>
+        
+        <div class="card shadow mt-3">
+            <div class="card-header bg-warning text-dark">
+                <h6><i class="fas fa-exclamation-triangle me-2"></i>Importante</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    <li><i class="fas fa-arrow-right text-warning me-2"></i>Los cambios afectarán a futuros entrenamientos</li>
+                    <li><i class="fas fa-arrow-right text-warning me-2"></i>Verifica la disponibilidad del entrenador</li>
+                    <li><i class="fas fa-arrow-right text-warning me-2"></i>Confirma la disponibilidad del espacio</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Gestión de Entrenamientos - Club Deportivo{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2><i class="fas fa-running me-2"></i>Gestión de Entrenamientos</h2>
+        <p class="text-muted">Administra los entrenamientos del club</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('admin.add_training') }}" class="btn btn-success">
+            <i class="fas fa-plus me-2"></i>Nuevo Entrenamiento
+        </a>
+    </div>
+</div>
+
+<div class="card shadow">
+    <div class="card-header bg-success text-white">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h6 class="mb-0"><i class="fas fa-list me-2"></i>Lista de Entrenamientos</h6>
+            </div>
+            <div class="col-md-6">
+                <input type="text" class="form-control search-input" placeholder="Buscar entrenamientos...">
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if trainings %}
+            <div class="table-responsive">
+                <table class="table table-hover" id="trainingsTable">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Deporte</th>
+                            <th>Entrenador</th>
+                            <th>Horario</th>
+                            <th>Ubicación</th>
+                            <th>Participantes</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for training in trainings %}
+                            <tr>
+                                <td>
+                                    <div>
+                                        <strong>{{ training.name }}</strong>
+                                        {% if training.description %}
+                                            <br><small class="text-muted">{{ training.description[:50] }}{% if training.description|length > 50 %}...{% endif %}</small>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary">{{ training.sport_type }}</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 30px; height: 30px; font-size: 0.7rem;">
+                                            {{ training.trainer.first_name[0] }}{{ training.trainer.last_name[0] }}
+                                        </div>
+                                        <div>
+                                            <strong>{{ training.trainer.first_name }} {{ training.trainer.last_name }}</strong>
+                                            <br><small class="text-muted">{{ training.trainer.specialization or 'Sin especialización' }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <strong>{{ training.schedule_day }}</strong>
+                                        <br><small class="text-muted">{{ training.schedule_time.strftime('%H:%M') }}</small>
+                                        <br><small class="text-muted">{{ training.duration_minutes }} min</small>
+                                    </div>
+                                </td>
+                                <td>{{ training.location or 'No especificada' }}</td>
+                                <td>
+                                    <span class="badge bg-info">{{ training.max_participants }} máx.</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if training.is_active else 'danger' }}">
+                                        {{ 'Activo' if training.is_active else 'Inactivo' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a href="{{ url_for('admin.edit_training', id=training.id) }}" class="btn btn-outline-primary" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-outline-danger" title="Eliminar" data-confirm="true" onclick="deleteTraining({{ training.id }})">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-running fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No hay entrenamientos registrados</h5>
+                <p class="text-muted">Comienza agregando el primer entrenamiento del club</p>
+                <a href="{{ url_for('admin.add_training') }}" class="btn btn-success">
+                    <i class="fas fa-plus me-2"></i>Agregar Primer Entrenamiento
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal de confirmación -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que quieres desactivar este entrenamiento?</p>
+                <p class="text-muted">Esta acción puede ser revertida más tarde.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Desactivar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function deleteTraining(trainingId) {
+    document.getElementById('deleteForm').action = '{{ url_for("admin.delete_training", id=0) }}'.replace('0', trainingId);
+    new bootstrap.Modal(document.getElementById('deleteModal')).show();
+}
+</script>
+{% endblock %}

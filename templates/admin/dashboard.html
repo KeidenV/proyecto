@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Administrador - Club Deportivo{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/notifications.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="fas fa-tachometer-alt me-2"></i>Dashboard Administrador</h2>
+        <p class="text-muted">Resumen general del club deportivo</p>
+    </div>
+</div>
+
+<!-- Estadísticas -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="stats-icon"><i class="fas fa-users"></i></div>
+            <div class="stats-number">{{ stats.total_miembros }}</div>
+            <div class="stats-label">Miembros Activos</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="stats-icon"><i class="fas fa-user-tie"></i></div>
+            <div class="stats-number">{{ stats.total_entrenadores }}</div>
+            <div class="stats-label">Entrenadores</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="stats-icon"><i class="fas fa-running"></i></div>
+            <div class="stats-number">{{ stats.total_entrenamientos }}</div>
+            <div class="stats-label">Entrenamientos</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="stats-icon"><i class="fas fa-trophy"></i></div>
+            <div class="stats-number">{{ stats.total_competiciones }}</div>
+            <div class="stats-label">Competiciones</div>
+        </div>
+    </div>
+</div>
+
+<!-- Gráficos y Analytics -->
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="card dashboard-card">
+            <div class="card-header bg-primary text-white">
+                <h6><i class="fas fa-chart-line me-2"></i>Asistencias por Mes</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="attendanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card dashboard-card">
+            <div class="card-header bg-success text-white">
+                <h6><i class="fas fa-chart-pie me-2"></i>Actividades Populares</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="activitiesChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Usuarios Recientes -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h6><i class="fas fa-users me-2"></i>Usuarios Recientes</h6>
+                <a href="{{ url_for('admin.usuarios') }}" class="btn btn-sm btn-light">Ver Todos</a>
+            </div>
+            <div class="card-body">
+                {% if recent_usuarios %}
+                    {% for usuario in recent_usuarios %}
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                {{ usuario.nombre[0] }}{{ usuario.apellido[0] }}
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0">{{ usuario.nombre }} {{ usuario.apellido }}</h6>
+                                <small class="text-muted">{{ usuario.rol.nombre_rol }}</small>
+                            </div>
+                            <span class="badge bg-success">Activo</span>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted text-center">No hay usuarios registrados</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Próximas Competiciones -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow">
+            <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                <h6><i class="fas fa-trophy me-2"></i>Próximas Competiciones</h6>
+                <a href="{{ url_for('admin.competiciones') }}" class="btn btn-sm btn-dark">Ver Todas</a>
+            </div>
+            <div class="card-body">
+                {% if upcoming_competiciones %}
+                    {% for competicion in upcoming_competiciones %}
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h6 class="mb-0">{{ competicion.nombre }}</h6>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    {{ competicion.fecha.strftime('%d/%m/%Y') }}
+                                </small>
+                            </div>
+                            <span class="badge bg-warning text-dark">{{ competicion.actividad.nombre_actividad if competicion.actividad else 'General' }}</span>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted text-center">No hay competiciones programadas</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Acciones Rápidas -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h6><i class="fas fa-bolt me-2"></i>Acciones Rápidas</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <h6 class="text-primary mb-3">Ver Listas</h6>
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('admin.usuarios') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-users me-2"></i>Ver Usuarios
+                            </a>
+                            <a href="{{ url_for('admin.actividades') }}" class="btn btn-outline-info">
+                                <i class="fas fa-dumbbell me-2"></i>Ver Actividades
+                            </a>
+                            <a href="{{ url_for('admin.entrenamientos') }}" class="btn btn-outline-success">
+                                <i class="fas fa-running me-2"></i>Ver Entrenamientos
+                            </a>
+                            <a href="{{ url_for('admin.competiciones') }}" class="btn btn-outline-warning">
+                                <i class="fas fa-trophy me-2"></i>Ver Competiciones
+                            </a>
+                            <a href="{{ url_for('reports.index') }}" class="btn btn-outline-info">
+                                <i class="fas fa-file-pdf me-2"></i>Generar PDFs
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <h6 class="text-primary mb-3">Agregar Nuevos</h6>
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('admin.add_usuario') }}" class="btn btn-primary">
+                                <i class="fas fa-user-plus me-2"></i>Nuevo Usuario
+                            </a>
+                            <a href="{{ url_for('admin.add_actividad') }}" class="btn btn-info">
+                                <i class="fas fa-dumbbell me-2"></i>Nueva Actividad
+                            </a>
+                            <a href="{{ url_for('admin.add_entrenamiento') }}" class="btn btn-success">
+                                <i class="fas fa-running me-2"></i>Nuevo Entrenamiento
+                            </a>
+                            <a href="{{ url_for('admin.add_competicion') }}" class="btn btn-warning">
+                                <i class="fas fa-trophy me-2"></i>Nueva Competición
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Botón de notificaciones -->
+<button class="notification-toggle" onclick="notificationSystem.toggleContainer()">
+    <i class="fas fa-bell"></i>
+</button>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+<script src="{{ url_for('static', filename='js/notifications.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Datos de ejemplo para los gráficos (en producción vendrían del servidor)
+    const attendanceData = {
+        labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+        values: [45, 52, 48, 61, 55, 67]
+    };
+
+    const activitiesData = {
+        labels: ['Fútbol', 'Baloncesto', 'Natación', 'Atletismo', 'Voleibol'],
+        values: [35, 25, 20, 15, 5]
+    };
+
+    // Crear gráficos
+    if (window.dashboardCharts) {
+        window.dashboardCharts.createAttendanceChart('attendanceChart', attendanceData);
+        window.dashboardCharts.createActivitiesChart('activitiesChart', activitiesData);
+    }
+
+    // Simular notificaciones de bienvenida
+    setTimeout(() => {
+        if (window.notificationSystem) {
+            window.notificationSystem.addNotification('success', 'Bienvenido', 'Dashboard cargado correctamente', 3000);
+        }
+    }, 1000);
+});
+</script>
+{% endblock %}

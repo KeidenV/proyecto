@@ -1,0 +1,15 @@
+# Archivo de configuración para el entorno virtual
+# Este archivo se ejecuta cuando se activa el entorno virtual
+
+echo "🐍 Entorno virtual del Club Deportivo activado"
+echo "📁 Directorio actual: $(pwd)"
+echo "🔧 Para ejecutar la aplicación: python app.py"
+echo "🗄️ Para inicializar la base de datos: python init_db.py"
+echo "📦 Para instalar dependencias: pip install -r requirements.txt"
+echo ""
+echo "👥 Usuarios de prueba disponibles:"
+echo "   👑 Admin: admin / admin123"
+echo "   🏃 Entrenadores: carlos.trainer, ana.trainer, luis.trainer / trainer123"
+echo "   👥 Miembros: juan.member, maria.member, pedro.member, laura.member, diego.member / member123"
+echo ""
+echo "🌐 La aplicación estará disponible en: http://localhost:5000"

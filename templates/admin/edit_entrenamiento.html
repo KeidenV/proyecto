@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Entrenamiento - Club Deportivo{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="fas fa-edit me-2"></i>Editar Entrenamiento</h2>
+        <p class="text-muted">Modificar información del entrenamiento</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h6><i class="fas fa-running me-2"></i>Información del Entrenamiento</h6>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.id_entrenador.label(class="form-label") }}
+                            {{ form.id_entrenador(class="form-select") }}
+                            {% if form.id_entrenador.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.id_entrenador.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            {{ form.id_actividad.label(class="form-label") }}
+                            {{ form.id_actividad(class="form-select") }}
+                            {% if form.id_actividad.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.id_actividad.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.fecha.label(class="form-label") }}
+                        {{ form.fecha(class="form-control", type="date") }}
+                        {% if form.fecha.errors %}
+                            <div class="text-danger">
+                                {% for error in form.fecha.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('admin.entrenamientos') }}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-arrow-left me-1"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h6><i class="fas fa-info-circle me-2"></i>Información</h6>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    Al cambiar el entrenador o la actividad, se actualizarán automáticamente las asistencias relacionadas.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

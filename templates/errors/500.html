@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Error del servidor - Club Deportivo{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 text-center">
+        <div class="card shadow">
+            <div class="card-body">
+                <i class="fas fa-server fa-5x text-danger mb-4"></i>
+                <h1 class="display-1 text-danger">500</h1>
+                <h3 class="mb-3">Error interno del servidor</h3>
+                <p class="lead mb-4">Ha ocurrido un error inesperado. Nuestro equipo técnico ha sido notificado.</p>
+                <a href="{{ url_for('main.index') }}" class="btn btn-primary">
+                    <i class="fas fa-home me-2"></i>Volver al Inicio
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

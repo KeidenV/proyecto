@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Gestión de Entrenadores - Club Deportivo{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2><i class="fas fa-user-tie me-2"></i>Gestión de Entrenadores</h2>
+        <p class="text-muted">Administra la información de los entrenadores del club</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('admin.add_trainer') }}" class="btn btn-primary">
+            <i class="fas fa-user-plus me-2"></i>Nuevo Entrenador
+        </a>
+    </div>
+</div>
+
+<div class="card shadow">
+    <div class="card-header bg-primary text-white">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h6 class="mb-0"><i class="fas fa-list me-2"></i>Lista de Entrenadores</h6>
+            </div>
+            <div class="col-md-6">
+                <input type="text" class="form-control search-input" placeholder="Buscar entrenadores...">
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if trainers %}
+            <div class="table-responsive">
+                <table class="table table-hover" id="trainersTable">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Especialización</th>
+                            <th>Teléfono</th>
+                            <th>Email</th>
+                            <th>Certificación</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for trainer in trainers %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar bg-info text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 35px; height: 35px; font-size: 0.8rem;">
+                                            {{ trainer.first_name[0] }}{{ trainer.last_name[0] }}
+                                        </div>
+                                        <div>
+                                            <strong>{{ trainer.first_name }} {{ trainer.last_name }}</strong>
+                                            {% if trainer.hire_date %}
+                                                <br><small class="text-muted">Contratado: {{ trainer.hire_date.strftime('%d/%m/%Y') }}</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">{{ trainer.specialization or 'No especificada' }}</span>
+                                </td>
+                                <td>{{ trainer.phone or 'No registrado' }}</td>
+                                <td>{{ trainer.email or trainer.user.email }}</td>
+                                <td>
+                                    <small class="text-muted">{{ trainer.certification or 'No especificada' }}</small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if trainer.is_active else 'danger' }}">
+                                        {{ 'Activo' if trainer.is_active else 'Inactivo' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a href="{{ url_for('admin.edit_trainer', id=trainer.id) }}" class="btn btn-outline-primary" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-outline-danger" title="Eliminar" data-confirm="true" onclick="deleteTrainer({{ trainer.id }})">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-user-tie fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No hay entrenadores registrados</h5>
+                <p class="text-muted">Comienza agregando el primer entrenador del club</p>
+                <a href="{{ url_for('admin.add_trainer') }}" class="btn btn-primary">
+                    <i class="fas fa-user-plus me-2"></i>Agregar Primer Entrenador
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal de confirmación -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que quieres desactivar este entrenador?</p>
+                <p class="text-muted">Esta acción puede ser revertida más tarde.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Desactivar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function deleteTrainer(trainerId) {
+    document.getElementById('deleteForm').action = '{{ url_for("admin.delete_trainer", id=0) }}'.replace('0', trainerId);
+    new bootstrap.Modal(document.getElementById('deleteModal')).show();
+}
+</script>
+{% endblock %}

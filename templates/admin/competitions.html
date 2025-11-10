@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Gestión de Competiciones - Club Deportivo{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2><i class="fas fa-trophy me-2"></i>Gestión de Competiciones</h2>
+        <p class="text-muted">Administra las competiciones y eventos del club</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('admin.add_competition') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Nueva Competición
+        </a>
+    </div>
+</div>
+
+<div class="card shadow">
+    <div class="card-header bg-primary text-white">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h6 class="mb-0"><i class="fas fa-list me-2"></i>Lista de Competiciones</h6>
+            </div>
+            <div class="col-md-6">
+                <input type="text" class="form-control search-input" placeholder="Buscar competiciones...">
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if competitions %}
+            <div class="table-responsive">
+                <table class="table table-hover" id="competitionsTable">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Tipo de Deporte</th>
+                            <th>Fecha</th>
+                            <th>Ubicación</th>
+                            <th>Participantes</th>
+                            <th>Costo</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for competition in competitions %}
+                            <tr>
+                                <td>
+                                    <div>
+                                        <strong>{{ competition.name }}</strong>
+                                        {% if competition.description %}
+                                            <br><small class="text-muted">{{ competition.description[:50] }}{% if competition.description|length > 50 %}...{% endif %}</small>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">{{ competition.sport_type }}</span>
+                                </td>
+                                <td>
+                                    <div>
+                                        <strong>{{ competition.event_date.strftime('%d/%m/%Y') }}</strong>
+                                        {% if competition.event_time %}
+                                            <br><small class="text-muted">{{ competition.event_time.strftime('%H:%M') }}</small>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td>{{ competition.location or 'No especificada' }}</td>
+                                <td>
+                                    {% if competition.max_participants %}
+                                        <span class="badge bg-secondary">{{ competition.max_participants }} máx.</span>
+                                    {% else %}
+                                        <span class="text-muted">Sin límite</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if competition.entry_fee and competition.entry_fee > 0 %}
+                                        <span class="text-success">${{ "%.2f"|format(competition.entry_fee) }}</span>
+                                    {% else %}
+                                        <span class="text-muted">Gratis</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% set days_until = (competition.event_date - today).days %}
+                                    {% if days_until > 0 %}
+                                        <span class="badge bg-success">En {{ days_until }} días</span>
+                                    {% elif days_until == 0 %}
+                                        <span class="badge bg-warning">Hoy</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Pasada</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a href="{{ url_for('admin.edit_competition', id=competition.id) }}" class="btn btn-outline-primary" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-outline-danger" title="Eliminar" data-confirm="true" onclick="deleteCompetition({{ competition.id }})">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-trophy fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No hay competiciones registradas</h5>
+                <p class="text-muted">Comienza agregando la primera competición del club</p>
+                <a href="{{ url_for('admin.add_competition') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Agregar Primera Competición
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal de confirmación -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que quieres desactivar esta competición?</p>
+                <p class="text-muted">Esta acción puede ser revertida más tarde.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Desactivar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function deleteCompetition(competitionId) {
+    document.getElementById('deleteForm').action = '{{ url_for("admin.delete_competition", id=0) }}'.replace('0', competitionId);
+    new bootstrap.Modal(document.getElementById('deleteModal')).show();
+}
+</script>
+{% endblock %}

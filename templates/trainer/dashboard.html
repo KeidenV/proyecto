@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Entrenador - Club Deportivo{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="fas fa-user-tie me-2"></i>Dashboard Entrenador</h2>
+        <p class="text-muted">Bienvenido, {{ trainer.first_name }} {{ trainer.last_name }}</p>
+    </div>
+</div>
+
+<!-- Estadísticas del Entrenador -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="stats-card">
+            <div class="stats-number">{{ stats.total_trainings }}</div>
+            <div class="stats-label">Mis Entrenamientos</div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="stats-card">
+            <div class="stats-number">{{ stats.total_attendances }}</div>
+            <div class="stats-label">Total Asistencias</div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="stats-card">
+            <div class="stats-number">{{ stats.today_attendances }}</div>
+            <div class="stats-label">Asistencias Hoy</div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Mis Entrenamientos -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                <h6><i class="fas fa-running me-2"></i>Mis Entrenamientos</h6>
+                <a href="{{ url_for('trainer.trainings') }}" class="btn btn-sm btn-light">Ver Todos</a>
+            </div>
+            <div class="card-body">
+                {% if trainings %}
+                    {% for training in trainings %}
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h6 class="mb-0">{{ training.name }}</h6>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    {{ training.schedule_day }} a las {{ training.schedule_time.strftime('%H:%M') }}
+                                </small>
+                                <br>
+                                <small class="text-muted">
+                                    <i class="fas fa-map-marker-alt me-1"></i>
+                                    {{ training.location }}
+                                </small>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-success">{{ training.sport_type }}</span>
+                                <br>
+                                <small class="text-muted">{{ training.max_participants }} participantes</small>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('trainer.training_attendance', id=training.id) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-check-circle me-1"></i>Asistencias
+                            </a>
+                            <a href="{{ url_for('trainer.edit_training', id=training.id) }}" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-edit me-1"></i>Editar
+                            </a>
+                        </div>
+                        {% if not loop.last %}<hr>{% endif %}
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-3">
+                        <i class="fas fa-running fa-2x text-muted mb-2"></i>
+                        <p class="text-muted">No tienes entrenamientos asignados</p>
+                        <a href="{{ url_for('trainer.add_training') }}" class="btn btn-success">
+                            <i class="fas fa-plus me-2"></i>Crear Entrenamiento
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Asistencias Recientes -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h6><i class="fas fa-check-circle me-2"></i>Asistencias Recientes</h6>
+            </div>
+            <div class="card-body">
+                {% if recent_attendances %}
+                    {% for attendance in recent_attendances %}
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="avatar bg-info text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 35px; height: 35px; font-size: 0.8rem;">
+                                {{ attendance.member.first_name[0] }}{{ attendance.member.last_name[0] }}
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0">{{ attendance.member.first_name }} {{ attendance.member.last_name }}</h6>
+                                <small class="text-muted">
+                                    {{ attendance.training.name }} - {{ attendance.attendance_date.strftime('%d/%m/%Y') }}
+                                </small>
+                            </div>
+                            <div class="text-end">
+                                {% if attendance.check_in_time %}
+                                    <small class="text-success">
+                                        <i class="fas fa-clock me-1"></i>
+                                        {{ attendance.check_in_time.strftime('%H:%M') }}
+                                    </small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-3">
+                        <i class="fas fa-check-circle fa-2x text-muted mb-2"></i>
+                        <p class="text-muted">No hay asistencias registradas</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Acciones Rápidas -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header bg-warning text-dark">
+                <h6><i class="fas fa-bolt me-2"></i>Acciones Rápidas</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('trainer.add_training') }}" class="btn btn-outline-success w-100">
+                            <i class="fas fa-plus me-2"></i>Nuevo Entrenamiento
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('trainer.members') }}" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-users me-2"></i>Ver Miembros
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('auth.profile') }}" class="btn btn-outline-info w-100">
+                            <i class="fas fa-user me-2"></i>Mi Perfil
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('main.calendar') }}" class="btn btn-outline-secondary w-100">
+                            <i class="fas fa-calendar me-2"></i>Calendario
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

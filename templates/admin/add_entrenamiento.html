@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Nuevo Entrenamiento - Club Deportivo{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="fas fa-running me-2"></i>Nuevo Entrenamiento</h2>
+        <p class="text-muted">Programar un nuevo entrenamiento</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h6><i class="fas fa-running me-2"></i>Información del Entrenamiento</h6>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.id_entrenador.label(class="form-label") }}
+                            {{ form.id_entrenador(class="form-select") }}
+                            {% if form.id_entrenador.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.id_entrenador.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.id_actividad.label(class="form-label") }}
+                            {{ form.id_actividad(class="form-select") }}
+                            {% if form.id_actividad.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.id_actividad.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.fecha.label(class="form-label") }}
+                            {{ form.fecha(class="form-control", type="date") }}
+                            {% if form.fecha.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.fecha.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('admin.entrenamientos') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Cancelar
+                        </a>
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h6><i class="fas fa-info-circle me-2"></i>Información</h6>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">
+                    <strong>Nota:</strong> Asegúrate de que el entrenador y la actividad estén registrados en el sistema antes de programar el entrenamiento.
+                </p>
+                <hr>
+                <h6>Pasos siguientes:</h6>
+                <ol class="list-unstyled">
+                    <li><i class="fas fa-check text-success me-2"></i>Seleccionar entrenador</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Elegir actividad</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Definir fecha</li>
+                    <li><i class="fas fa-clock text-warning me-2"></i>Registrar asistencias</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

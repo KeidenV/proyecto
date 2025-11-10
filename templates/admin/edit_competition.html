@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Competición - Club Deportivo{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2><i class="fas fa-edit me-2"></i>Editar Competición</h2>
+        <p class="text-muted">Modifica la información de la competición</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('admin.competitions') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Volver a Competiciones
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h6><i class="fas fa-trophy me-2"></i>Información de la Competición</h6>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        {{ form.name.label(class="form-label") }}
+                        {{ form.name(class="form-control") }}
+                        {% if form.name.errors %}
+                            <div class="text-danger">
+                                {% for error in form.name.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.description.label(class="form-label") }}
+                        {{ form.description(class="form-control", rows="3") }}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.sport_type.label(class="form-label") }}
+                            {{ form.sport_type(class="form-control") }}
+                            {% if form.sport_type.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.sport_type.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            {{ form.location.label(class="form-label") }}
+                            {{ form.location(class="form-control") }}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.event_date.label(class="form-label") }}
+                            {{ form.event_date(class="form-control") }}
+                            {% if form.event_date.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.event_date.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            {{ form.event_time.label(class="form-label") }}
+                            {{ form.event_time(class="form-control") }}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.registration_deadline.label(class="form-label") }}
+                            {{ form.registration_deadline(class="form-control") }}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            {{ form.max_participants.label(class="form-label") }}
+                            {{ form.max_participants(class="form-control") }}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.entry_fee.label(class="form-label") }}
+                        {{ form.entry_fee(class="form-control") }}
+                        <small class="form-text text-muted">Deja en 0 para competición gratuita</small>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('admin.competitions') }}" class="btn btn-secondary me-md-2">Cancelar</a>
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h6><i class="fas fa-info-circle me-2"></i>Información Actual</h6>
+            </div>
+            <div class="card-body">
+                <h6>Competición:</h6>
+                <p><strong>{{ competition.name }}</strong></p>
+                {% if competition.description %}
+                    <p><small class="text-muted">{{ competition.description[:100] }}{% if competition.description|length > 100 %}...{% endif %}</small></p>
+                {% endif %}
+                
+                <hr>
+                
+                <h6>Detalles:</h6>
+                <ul class="list-unstyled">
+                    <li><strong>Tipo:</strong> {{ competition.sport_type }}</li>
+                    <li><strong>Fecha:</strong> {{ competition.event_date.strftime('%d/%m/%Y') if competition.event_date else 'N/A' }}</li>
+                    <li><strong>Hora:</strong> {{ competition.event_time.strftime('%H:%M') if competition.event_time else 'No especificada' }}</li>
+                    <li><strong>Ubicación:</strong> {{ competition.location or 'No especificada' }}</li>
+                    <li><strong>Participantes:</strong> {{ competition.max_participants or 'Sin límite' }}</li>
+                    <li><strong>Costo:</strong> 
+                        {% if competition.entry_fee and competition.entry_fee > 0 %}
+                            ${{ "%.2f"|format(competition.entry_fee) }}
+                        {% else %}
+                            Gratis
+                        {% endif %}
+                    </li>
+                </ul>
+                
+                <hr>
+                
+                <h6>Estado:</h6>
+                <span class="badge bg-{{ 'success' if competition.is_active else 'danger' }}">
+                    {{ 'Activa' if competition.is_active else 'Inactiva' }}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

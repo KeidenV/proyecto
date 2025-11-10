@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% block title %}Reportes - Club Deportivo{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/notifications.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2><i class="fas fa-chart-bar me-2"></i>Generador de Reportes PDF</h2>
+            <p class="text-muted">Exporta datos del sistema en formato PDF</p>
+        </div>
+    </div>
+
+    <!-- Reportes de Administración -->
+    {% if current_user.rol and current_user.rol.nombre_rol == 'Administrador' %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card dashboard-card">
+                <div class="card-header bg-primary text-white">
+                    <h6><i class="fas fa-crown me-2"></i>Reportes de Administración</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="report-card">
+                                <div class="report-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="report-content">
+                                    <h6>Reporte de Usuarios</h6>
+                                    <p class="text-muted">Lista completa de todos los usuarios del sistema</p>
+                                    <a href="{{ url_for('reports.usuarios_pdf') }}" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-download me-1"></i>Descargar PDF
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="report-card">
+                                <div class="report-icon">
+                                    <i class="fas fa-dumbbell"></i>
+                                </div>
+                                <div class="report-content">
+                                    <h6>Reporte de Actividades</h6>
+                                    <p class="text-muted">Todas las actividades deportivas disponibles</p>
+                                    <a href="{{ url_for('reports.actividades_pdf') }}" class="btn btn-info btn-sm">
+                                        <i class="fas fa-download me-1"></i>Descargar PDF
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="report-card">
+                                <div class="report-icon">
+                                    <i class="fas fa-running"></i>
+                                </div>
+                                <div class="report-content">
+                                    <h6>Reporte de Entrenamientos</h6>
+                                    <p class="text-muted">Historial completo de entrenamientos programados</p>
+                                    <a href="{{ url_for('reports.entrenamientos_pdf') }}" class="btn btn-success btn-sm">
+                                        <i class="fas fa-download me-1"></i>Descargar PDF
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="report-card">
+                                <div class="report-icon">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <div class="report-content">
+                                    <h6>Reporte de Competiciones</h6>
+                                    <p class="text-muted">Todas las competiciones y eventos deportivos</p>
+                                    <a href="{{ url_for('reports.competiciones_pdf') }}" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-download me-1"></i>Descargar PDF
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="report-card">
+                                <div class="report-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="report-content">
+                                    <h6>Reporte de Asistencias</h6>
+                                    <p class="text-muted">Registro detallado de asistencias a entrenamientos</p>
+                                    <a href="{{ url_for('reports.asistencias_pdf') }}" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-download me-1"></i>Descargar PDF
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Reportes Personales -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card dashboard-card">
+                <div class="card-header bg-success text-white">
+                    <h6><i class="fas fa-user me-2"></i>Reportes Personales</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="report-card">
+                                <div class="report-icon">
+                                    <i class="fas fa-file-user"></i>
+                                </div>
+                                <div class="report-content">
+                                    <h6>Mi Reporte Personal</h6>
+                                    <p class="text-muted">Información personal, entrenamientos y actividades</p>
+                                    <a href="{{ url_for('reports.miembro_pdf', user_id=current_user.id_usuario) }}" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-download me-1"></i>Descargar Mi PDF
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información sobre los reportes -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card dashboard-card">
+                <div class="card-header bg-info text-white">
+                    <h6><i class="fas fa-info-circle me-2"></i>Información sobre los Reportes</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Características de los PDFs:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Formato profesional</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Datos actualizados al momento de la descarga</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Tablas organizadas y legibles</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Numeración de páginas</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Fecha y hora de generación</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Tipos de Reportes:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-file-pdf text-danger me-2"></i><strong>Usuarios:</strong> Lista completa de miembros, entrenadores y administradores</li>
+                                <li><i class="fas fa-file-pdf text-danger me-2"></i><strong>Actividades:</strong> Todas las actividades deportivas disponibles</li>
+                                <li><i class="fas fa-file-pdf text-danger me-2"></i><strong>Entrenamientos:</strong> Historial de entrenamientos programados</li>
+                                <li><i class="fas fa-file-pdf text-danger me-2"></i><strong>Competiciones:</strong> Eventos y competiciones deportivas</li>
+                                <li><i class="fas fa-file-pdf text-danger me-2"></i><strong>Asistencias:</strong> Registro detallado de asistencias</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.report-card {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.report-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-color: #007bff;
+}
+
+.report-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+    flex-shrink: 0;
+}
+
+.report-icon i {
+    font-size: 24px;
+    color: white;
+}
+
+.report-content {
+    flex: 1;
+}
+
+.report-content h6 {
+    margin-bottom: 8px;
+    color: #495057;
+    font-weight: 600;
+}
+
+.report-content p {
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    .report-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .report-icon {
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+}
+</style>
+{% endblock %}

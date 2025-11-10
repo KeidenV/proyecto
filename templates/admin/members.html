@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+
+{% block title %}Gestión de Miembros - Club Deportivo{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2><i class="fas fa-users me-2"></i>Gestión de Miembros</h2>
+        <p class="text-muted">Administra la información de los miembros del club</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('admin.add_member') }}" class="btn btn-primary">
+            <i class="fas fa-user-plus me-2"></i>Nuevo Miembro
+        </a>
+    </div>
+</div>
+
+<div class="card shadow">
+    <div class="card-header bg-primary text-white">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h6 class="mb-0"><i class="fas fa-list me-2"></i>Lista de Miembros</h6>
+            </div>
+            <div class="col-md-6">
+                <input type="text" class="form-control search-input" placeholder="Buscar miembros...">
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if members %}
+            <div class="table-responsive">
+                <table class="table table-hover" id="membersTable">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Teléfono</th>
+                            <th>Email</th>
+                            <th>Membresía</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for member in members %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 35px; height: 35px; font-size: 0.8rem;">
+                                            {{ member.first_name[0] }}{{ member.last_name[0] }}
+                                        </div>
+                                        <div>
+                                            <strong>
+                                                <span class="editable" data-field="first_name" data-id="{{ member.id }}">{{ member.first_name }}</span> 
+                                                <span class="editable" data-field="last_name" data-id="{{ member.id }}">{{ member.last_name }}</span>
+                                            </strong>
+                                            {% if member.birth_date %}
+                                                <br><small class="text-muted">{{ member.birth_date.strftime('%d/%m/%Y') }}</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="editable" data-field="phone" data-id="{{ member.id }}">
+                                        {{ member.phone or 'No registrado' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="editable" data-field="email" data-id="{{ member.id }}">
+                                        {{ member.user.email }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <small class="text-muted">
+                                        Desde: {{ member.membership_start.strftime('%d/%m/%Y') }}<br>
+                                        {% if member.membership_end %}
+                                            Hasta: {{ member.membership_end.strftime('%d/%m/%Y') }}
+                                        {% else %}
+                                            <span class="text-success">Sin fecha límite</span>
+                                        {% endif %}
+                                    </small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if member.is_active else 'danger' }}">
+                                        {{ 'Activo' if member.is_active else 'Inactivo' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a href="{{ url_for('admin.download_member_pdf', id=member.id) }}" class="btn btn-outline-success" title="Descargar PDF">
+                                            <i class="fas fa-file-pdf"></i>
+                                        </a>
+                                        <a href="{{ url_for('admin.edit_member', id=member.id) }}" class="btn btn-outline-primary" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-outline-danger" title="Eliminar" data-confirm="true" onclick="deleteMember({{ member.id }})">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No hay miembros registrados</h5>
+                <p class="text-muted">Comienza agregando el primer miembro del club</p>
+                <a href="{{ url_for('admin.add_member') }}" class="btn btn-primary">
+                    <i class="fas fa-user-plus me-2"></i>Agregar Primer Miembro
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal de confirmación -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que quieres desactivar este miembro?</p>
+                <p class="text-muted">Esta acción puede ser revertida más tarde.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Desactivar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Indicador de guardado -->
+<div id="saveIndicator" class="save-indicator">
+    <i class="fas fa-check-circle me-2"></i>
+    <span>Guardado</span>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function deleteMember(memberId) {
+    document.getElementById('deleteForm').action = '{{ url_for("admin.delete_member", id=0) }}'.replace('0', memberId);
+    new bootstrap.Modal(document.getElementById('deleteModal')).show();
+}
+
+// Edición en tiempo real
+document.addEventListener('DOMContentLoaded', function() {
+    const editableElements = document.querySelectorAll('.editable');
+    const saveIndicator = document.getElementById('saveIndicator');
+    
+    editableElements.forEach(element => {
+        element.addEventListener('click', function() {
+            if (this.classList.contains('editing')) return;
+            
+            const originalValue = this.textContent.trim();
+            const field = this.dataset.field;
+            const memberId = this.dataset.id;
+            
+            // Crear input
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = originalValue;
+            input.className = 'form-control form-control-sm';
+            
+            // Guardar referencia al elemento original
+            this.originalValue = originalValue;
+            this.classList.add('editing');
+            
+            // Reemplazar contenido
+            this.innerHTML = '';
+            this.appendChild(input);
+            input.focus();
+            input.select();
+            
+            // Manejar eventos
+            const handleSave = () => {
+                const newValue = input.value.trim();
+                if (newValue !== originalValue) {
+                    saveField(memberId, field, newValue, this);
+                } else {
+                    cancelEdit(this, originalValue);
+                }
+            };
+            
+            const handleCancel = () => {
+                cancelEdit(this, originalValue);
+            };
+            
+            input.addEventListener('blur', handleSave);
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSave();
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    handleCancel();
+                }
+            });
+        });
+    });
+    
+    function cancelEdit(element, originalValue) {
+        element.classList.remove('editing');
+        element.textContent = originalValue;
+    }
+    
+    function saveField(memberId, field, value, element) {
+        console.log('Guardando campo:', field, 'valor:', value, 'miembro:', memberId);
+        
+        // Mostrar indicador de carga
+        element.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        
+        // Enviar datos al servidor
+        fetch(`/admin/members/${memberId}/update`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                field: field,
+                value: value
+            })
+        })
+        .then(response => {
+            console.log('Respuesta del servidor:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Datos recibidos:', data);
+            if (data.success) {
+                element.classList.remove('editing');
+                element.textContent = value;
+                showSaveIndicator('Guardado correctamente', 'success');
+            } else {
+                element.classList.remove('editing');
+                element.textContent = element.originalValue;
+                showSaveIndicator('Error al guardar: ' + (data.error || 'Error desconocido'), 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            element.classList.remove('editing');
+            element.textContent = element.originalValue;
+            showSaveIndicator('Error de conexión', 'error');
+        });
+    }
+    
+    function showSaveIndicator(message, type) {
+        const indicator = saveIndicator;
+        const icon = indicator.querySelector('i');
+        const text = indicator.querySelector('span');
+        
+        text.textContent = message;
+        indicator.className = `save-indicator ${type === 'error' ? 'error' : ''} show`;
+        
+        if (type === 'error') {
+            icon.className = 'fas fa-exclamation-circle me-2';
+        } else {
+            icon.className = 'fas fa-check-circle me-2';
+        }
+        
+        setTimeout(() => {
+            indicator.classList.remove('show');
+        }, 3000);
+    }
+    
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Actividad - Club Deportivo{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="fas fa-edit me-2"></i>Editar Actividad</h2>
+        <p class="text-muted">Modificar información de la actividad</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h6><i class="fas fa-dumbbell me-2"></i>Información de la Actividad</h6>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        {{ form.nombre_actividad.label(class="form-label") }}
+                        {{ form.nombre_actividad(class="form-control") }}
+                        {% if form.nombre_actividad.errors %}
+                            <div class="text-danger">
+                                {% for error in form.nombre_actividad.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('admin.actividades') }}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-arrow-left me-1"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h6><i class="fas fa-info-circle me-2"></i>Información</h6>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    Los cambios se aplicarán inmediatamente a todos los entrenamientos y competiciones que usen esta actividad.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Club Deportivo - Inicio{% endblock %}
+
+{% block content %}
+<div class="hero-section bg-primary text-white py-5 mb-5">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold">Bienvenido al Club Deportivo</h1>
+        <p class="lead">Tu plataforma integral para la gestión deportiva</p>
+        {% if not current_user.is_authenticated %}
+            <a href="{{ url_for('auth.login') }}" class="btn btn-light btn-lg me-3">
+                <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+            </a>
+            <a href="{{ url_for('auth.register') }}" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-user-plus me-2"></i>Registrarse
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow">
+            <div class="card-body text-center">
+                <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                <h5 class="card-title">Gestión de Miembros</h5>
+                <p class="card-text">Administra información de miembros, membresías y datos médicos importantes.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow">
+            <div class="card-body text-center">
+                <i class="fas fa-running fa-3x text-success mb-3"></i>
+                <h5 class="card-title">Entrenamientos</h5>
+                <p class="card-text">Programa entrenamientos, registra asistencias y gestiona horarios.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow">
+            <div class="card-body text-center">
+                <i class="fas fa-trophy fa-3x text-warning mb-3"></i>
+                <h5 class="card-title">Competiciones</h5>
+                <p class="card-text">Organiza eventos deportivos y competiciones del club.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-6 mb-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-chart-bar text-info me-2"></i>Reportes y Estadísticas
+                </h5>
+                <p class="card-text">Genera reportes PDF de asistencia, historial de entrenamientos y resultados de competiciones.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-calendar-alt text-danger me-2"></i>Calendario de Eventos
+                </h5>
+                <p class="card-text">Mantén un calendario actualizado de todos los eventos y actividades del club.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if current_user.is_authenticated %}
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="alert alert-info">
+            <h5><i class="fas fa-info-circle me-2"></i>Acceso Rápido</h5>
+            <p class="mb-0">Ya estás logueado como <strong>{{ current_user.username }}</strong> ({{ current_user.role }}). 
+            <a href="{{ url_for('main.dashboard') }}" class="alert-link">Ir al Dashboard</a></p>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

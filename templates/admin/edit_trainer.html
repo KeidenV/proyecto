@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Entrenador - Club Deportivo{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2><i class="fas fa-user-edit me-2"></i>Editar Entrenador</h2>
+        <p class="text-muted">Modifica la información del entrenador</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('admin.trainers') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Volver a Entrenadores
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h6><i class="fas fa-user-tie me-2"></i>Información del Entrenador</h6>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.first_name.label(class="form-label") }}
+                            {{ form.first_name(class="form-control") }}
+                            {% if form.first_name.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.first_name.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            {{ form.last_name.label(class="form-label") }}
+                            {{ form.last_name(class="form-control") }}
+                            {% if form.last_name.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.last_name.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.phone.label(class="form-label") }}
+                            {{ form.phone(class="form-control", type="tel") }}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            {{ form.email.label(class="form-label") }}
+                            {{ form.email(class="form-control", type="email") }}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.specialization.label(class="form-label") }}
+                            {{ form.specialization(class="form-control") }}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            {{ form.certification.label(class="form-label") }}
+                            {{ form.certification(class="form-control") }}
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('admin.trainers') }}" class="btn btn-secondary me-md-2">Cancelar</a>
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h6><i class="fas fa-info-circle me-2"></i>Información Actual</h6>
+            </div>
+            <div class="card-body">
+                <h6>Entrenador:</h6>
+                <p><strong>{{ trainer.first_name }} {{ trainer.last_name }}</strong></p>
+                <p><small class="text-muted">{{ trainer.email or trainer.user.email }}</small></p>
+                
+                <hr>
+                
+                <h6>Detalles:</h6>
+                <ul class="list-unstyled">
+                    <li><strong>Teléfono:</strong> {{ trainer.phone or 'No registrado' }}</li>
+                    <li><strong>Especialización:</strong> {{ trainer.specialization or 'No especificada' }}</li>
+                    <li><strong>Certificación:</strong> {{ trainer.certification or 'No especificada' }}</li>
+                    <li><strong>Fecha de Contratación:</strong> {{ trainer.hire_date.strftime('%d/%m/%Y') if trainer.hire_date else 'N/A' }}</li>
+                </ul>
+                
+                <hr>
+                
+                <h6>Estado:</h6>
+                <span class="badge bg-{{ 'success' if trainer.is_active else 'danger' }}">
+                    {{ 'Activo' if trainer.is_active else 'Inactivo' }}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

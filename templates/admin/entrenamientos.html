@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Entrenamientos - Club Deportivo{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="fas fa-running me-2"></i>Gestión de Entrenamientos</h2>
+        <p class="text-muted">Administrar entrenamientos programados</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h6><i class="fas fa-list me-2"></i>Lista de Entrenamientos</h6>
+                <div>
+                    <a href="{{ url_for('reports.entrenamientos_pdf') }}" class="btn btn-outline-light btn-sm me-2">
+                        <i class="fas fa-file-pdf me-1"></i>Exportar PDF
+                    </a>
+                    <a href="{{ url_for('admin.add_entrenamiento') }}" class="btn btn-light btn-sm">
+                        <i class="fas fa-plus me-1"></i>Nuevo Entrenamiento
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if entrenamientos %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Entrenador</th>
+                                    <th>Actividad</th>
+                                    <th>Fecha</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for entrenamiento in entrenamientos %}
+                                    <tr>
+                                        <td>{{ entrenamiento.id_entrenamiento }}</td>
+                                        <td>{{ entrenamiento.entrenador.nombre }} {{ entrenamiento.entrenador.apellido }}</td>
+                                        <td>{{ entrenamiento.actividad.nombre_actividad }}</td>
+                                        <td>{{ entrenamiento.fecha.strftime('%d/%m/%Y') }}</td>
+                                        <td>
+                                            <a href="{{ url_for('admin.edit_entrenamiento', id=entrenamiento.id_entrenamiento) }}" 
+                                               class="btn btn-sm btn-outline-primary" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form method="POST" action="{{ url_for('admin.delete_entrenamiento', id=entrenamiento.id_entrenamiento) }}" 
+                                                  style="display: inline;" onsubmit="return confirm('¿Estás seguro de eliminar este entrenamiento?')">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-running fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No hay entrenamientos programados</p>
+                        <a href="{{ url_for('admin.add_entrenamiento') }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Programar Primer Entrenamiento
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
