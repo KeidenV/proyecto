@@ -24,13 +24,13 @@ if (-not (Get-Command python -ErrorAction SilentlyContinue)) {
     exit 1
 }
 
-# 2) Crear entorno virtual si no existe
+# 2) Comprobar existencia del entorno virtual (no se creará automáticamente)
 $venvPath = Join-Path $projectRoot "venv"
 if (-not (Test-Path $venvPath)) {
-    Write-Host "[INFO] Creando entorno virtual..." -ForegroundColor Yellow
-    python -m venv venv
+    Write-Host "[WARN] No se encontró el entorno virtual 'venv'. Este script ya no lo crea automáticamente." -ForegroundColor Yellow
+    Write-Host "       Crea uno manualmente con: python -m venv venv" -ForegroundColor Yellow
 } else {
-    Write-Host "[OK] Entorno virtual ya existe" -ForegroundColor Green
+    Write-Host "[OK] Entorno virtual detectado" -ForegroundColor Green
 }
 
 # 3) Activar entorno virtual
